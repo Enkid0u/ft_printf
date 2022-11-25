@@ -1,39 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_convert_nbr.c                                   :+:      :+:    :+:   */
+/*   ft_convert_address.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rrebois <rrebois@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/23 17:39:39 by rrebois           #+#    #+#             */
-/*   Updated: 2022/11/25 16:57:42 by rrebois          ###   ########lyon.fr   */
+/*   Created: 2022/11/25 16:36:20 by rrebois           #+#    #+#             */
+/*   Updated: 2022/11/25 16:57:31 by rrebois          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	ft_convert_base_nbr(unsigned int i, char *base, unsigned int *ptr)
+static void	ft_convert_base_address(size_t i, char *base, unsigned int *ptr)
 {
 	if (i < 16)
 		ft_putchar(base[i], ptr);
 	else
 	{
-		ft_convert_base_nbr(i / 16, base, ptr);
-		ft_convert_base_nbr(i % 16, base, ptr);
+		ft_convert_base_address(i / 16, base, ptr);
+		ft_convert_base_address(i % 16, base, ptr);
 	}
 }
 
-void	ft_convert_nbr(unsigned int i, char c, unsigned int *ptr)
+void	ft_convert_address(size_t i, char c, unsigned int *ptr)
 {
 	char	*base_min;
-	char	*base_max;
 
 	base_min = "0123456789abcdef";
-	base_max = "0123456789ABCDEF";
-	if (c == 'u')
-		ft_putnbr_unsigned(i, ptr);
-	else if (c == 'x')
-		ft_convert_base_nbr(i, base_min, ptr);
-	else if (c == 'X')
-		ft_convert_base_nbr(i, base_max, ptr);
+	if (c == 'p')
+	{
+		ft_putstr("0x", ptr);
+		ft_convert_base_address(i, base_min, ptr);
+	}
 }

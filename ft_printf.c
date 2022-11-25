@@ -6,49 +6,54 @@
 /*   By: rrebois <rrebois@student.42lyon.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 12:25:06 by rrebois           #+#    #+#             */
-/*   Updated: 2022/11/23 17:54:11 by rrebois          ###   ########lyon.fr   */
+/*   Updated: 2022/11/25 17:10:04 by rrebois          ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libftprintf.h"
-#include "libft/libft.h"
+#include "ft_printf.h"
+
+static void	ft_check(char c, va_list ap, unsigned int *ptr)
+{
+	if (c == 'c')
+		ft_putchar((char) va_arg(ap, int), ptr);
+	else if (c == 's')
+		ft_putstr(va_arg(ap, char *), ptr);
+	else if (c == 'p')
+		ft_convert_address(va_arg(ap, size_t), c, ptr);
+	else if (c == 'd' || c == 'i')
+		ft_putnbr(va_arg(ap, int), ptr);
+	else if (c == 'u')
+		ft_convert_nbr(va_arg(ap, unsigned int), c, ptr);
+	else if (c == 'x' || c == 'X')
+		ft_convert_nbr(va_arg(ap, unsigned int), c, ptr);
+	else if (c == '%')
+		ft_putchar('%', ptr);
+}
 
 int	ft_printf(const char *s, ...)
 {
-	int	i = 0;
-	int	count = 0;
-	va_list	ap;
+	unsigned int	i;
+	unsigned int	count;
+	unsigned int	*ptr;
+	va_list			ap;
+
+	i = 0;
+	count = 0;
+	ptr = &count;
+	if (write(1, 0, 0) != 0)
+		return (-1);
 	va_start(ap, s);
 	while (s[i] != '\0')
 	{
-		if (s[i] == '%')
+		if (s[i] == '%' && s[i + 1])
 		{
-			if (s[i + 1] == 'c')
-				ft_putchar_fd((char) va_arg(ap, int), 1);
-			else if (s[i + 1] == 's')
-				ft_putstr_fd(va_arg(ap, char *), 1);
-			else if (s[i + 1] == 'p')
-				ft_convert_nbr(va_arg(ap, int), s[i + 1]);
-			else if (s[ i + 1] == 'd' || s[i + 1] == 'i')
-				ft_putnbr_fd(va_arg(ap, int), 1);
+			ft_check(s[i + 1], ap, ptr);
 			i++;
 		}
 		else
-			ft_putchar_fd(s[i], 1);
+			ft_putchar(s[i], ptr);
 		i++;
 	}
 	va_end(ap);
 	return (count);
 }
-
-#include <stdio.h>
-int	main()
-{
-	char	s[]="hello";
-	int		i = 5;
-	int		*ptr = &i;
-	printf("%s\n%c\n%p\n%d\n", s, s[0], ptr, s[0]);
-	ft_printf("%s\n%c\n%p\n%d\n", s, s[0], ptr, s[0]);
-}
-//https://c.developpez.com/cours/bernard-cassagne/node118.php
-//https://perhonen.fr/blog/2016/01/faire-fonction-nombre-arguments-variable-en-c-2701
